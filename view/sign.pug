@@ -1,0 +1,26 @@
+extends base
+
+block content 
+    if error 
+        span #{error}
+    form(method="POST")
+        span 이름 
+        input(type="text", placeholder="write your name", required, name="name")
+        p
+        span 이메일 
+        input(type="email", placeholder="write your email", required, name="email")
+        p 
+        span 아이디 
+        input(type="text", placeholder="write your ID", required, name="identification") 
+        p 
+        span 비밀번호
+        input(type="password", placeholder="write your password", required, name="password")
+        p 
+        span 비밀번호 확인 
+        input(type="password", placeholder="write your password again", required, name="password_2")
+        p 
+        button 회원가입
+        p 
+        a(href="/users/login") 로그인 화면으로
+        br
+        a(href="/") 홈 화면으로

@@ -1,0 +1,11 @@
+extends base
+
+block content 
+    if video
+        - const videoFile = video.videoFile
+        div 
+            video(src=`/upload/${videoFile}`, controls)
+        p 
+            span=video.title
+    else 
+        h1 Sorry, video not found.

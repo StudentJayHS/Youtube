@@ -1,0 +1,24 @@
+extends base
+
+block content 
+    if error 
+        span=error
+    form(method="POST", enctype="multipart/form-data")
+        span 표지 
+        input(type="file", name="thumbnail")
+        p
+        span 동영상 
+        input(type="file", name="video")
+        p
+        span 제목 
+        input(type="text", placeholder="write video title", name="title", required)
+        p 
+        span 내용
+        input(type="text", placeholder="write video description", name="description")
+        p 
+        span 해시태그
+        input(type="text", placeholder="write video hashtags", name="hashtag")
+        p 
+        button 업로드 
+        p
+        a(href="/") 홈 화면으로

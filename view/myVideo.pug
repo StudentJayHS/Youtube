@@ -1,0 +1,12 @@
+extends base
+include mixins/mixins
+
+block content 
+    if videos
+        each video in videos
+            - const id = video._id
+            - const thumbnail = video.thumbnail
+            a(href=`/videos/watch/${id}`)
+                img(src=`/upload/${thumbnail}`)
+            div
+                +video(video) 

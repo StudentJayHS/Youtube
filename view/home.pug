@@ -1,0 +1,29 @@
+extends base
+include mixins/mixins
+
+block content 
+    block header 
+    form(action="/search", method="GET")
+        input(type="text", placeholder="Search", name="search")
+    ul 
+        if !login
+            li 
+                a(href="/users/login") login 
+            li
+                a(href="/users/sign") sign
+        else 
+            li 
+                a(href="/users/logout") LogOut
+            li 
+                a(href="/videos/upload") Upload
+            li 
+                a(href="/videos/my-videos") My Videos
+
+    if videos
+        each video in videos
+            - const id = video._id
+            - const thumbnail = video.thumbnail
+            a(href=`/videos/watch/${id}`)
+                img(src=`upload/${thumbnail}`)
+            div
+                +video(video) 

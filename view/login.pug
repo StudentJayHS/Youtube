@@ -1,0 +1,21 @@
+extends base
+
+block content
+    if error 
+        span #{error}
+    form(method="POST")
+        span 아이디 
+        input(type="text", placeholder="write your ID", name="identification", required)
+        p 
+        span 비밀번호 
+        input(type="password", placeholder="write your password", name="password", required)
+        p 
+        button 로그인
+        p
+        a(href="/users/sign") don't you have account?
+        br
+        a(href="/users/find-ID") Did you forgot ID?
+        br
+        a(href="/users/find-password") Did you forgot password?
+        br
+        a(href="/") 홈 화면으로

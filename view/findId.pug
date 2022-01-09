@@ -1,0 +1,28 @@
+extends base
+
+block content
+    if error 
+        span=error
+    if !id
+        form(method="POST")
+            span 이메일 
+            input(type="email", placeholder="write your email", required, name="email")
+            p 
+            span 이름 
+            input(type="text", placeholder="write your name", required, name="name")
+            p 
+            button 확인
+            p
+            a(href="/users/login") 로그인 화면으로
+            br
+            a(href="/users/find-password") Did you forgot password?
+            br
+            a(href="/") 홈 화면으로
+    else 
+        span #{name} 님의 아이디는 #{id} 입니다.
+        p
+        a(href="/users/find-password") Did you forgot password?
+        br 
+        a(href="/users/login") 로그인 화면으로
+        br
+        a(href="/") 홈 화면으로
