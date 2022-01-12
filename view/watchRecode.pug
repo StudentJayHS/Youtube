@@ -1,0 +1,14 @@
+extends base
+include mixins/mixins
+
+block content 
+    if videos
+        each video in videos
+            - let user = userId
+            - let id = video._id
+            - let thumbnail = video.thumbnail
+            a(href=`/videos/watch/${id}`)
+                img(src=`/upload/${thumbnail}`)
+                br
+                span=video.title
+            +video(video) 

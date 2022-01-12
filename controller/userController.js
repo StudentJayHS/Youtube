@@ -1,6 +1,7 @@
 import { User } from "../database/User.js";
 import "express-session";
 import bcrypt from "bcrypt";
+import { VideoLog } from "../database/VideoLog.js";
 
 export const getSign = (req, res) => {
     const title = "Sign";
@@ -37,12 +38,17 @@ export const postSign = async (req, res) => {
         return res.render('sign', {error})
     }
 
+    await VideoLog.create({
+        email,
+    });
+
     await User.create({
         name,
         email,
         identification,
         password: await bcrypt.hash(password, 5),   // bcrypt를 통해 5번의 솔트값으로 비밀번호 해쉬
-    })
+    });
+
     res.redirect('/users/login')
 }
 

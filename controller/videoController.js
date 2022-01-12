@@ -1,6 +1,8 @@
 import "express-session";
 import "multer";
+import { User } from "../database/User.js";
 import { Video } from "../database/Video.js";
+import { VideoLog } from "../database/VideoLog.js";
 
 export const getUpload = async(req, res) => {
     const title = "Upload";
@@ -53,15 +55,43 @@ export const watch = async (req, res) => {
     const { id } = req.params;
     const video = await Video.findById(id);
     const title = video.title;
+
+    // 비디오 링크를 클릭하면 시청한 비디오 저장
+    const userId = req.session.userId;
+    if(userId) {
+        const user = await User.findById(userId);
+        const email = user.email;
+        const videoLog = await VideoLog.findOne({email});
+        let videos = videoLog.videos;
+        videos.push(video);
+
+        await VideoLog.findOneAndUpdate({email}, {videos});
+    }
+
     res.render('watch', {video, title});
 }
 
 export const myVideo = async (req, res) => {
     const title = "My Videos"
-    console.log(req.session.userId);
     const { userId } = req.session;
     const videos = await Video.find({userId});
-    console.log(videos);
 
     res.render('myVideo', {title, videos});
+}
+
+export const watchRecode = async (req, res) => {
+    const title = "Watch Recode";
+
+    const userId = req.session.userId;
+    if(userId) {
+        const user = await User.findById(userId);
+        const email = user.email;
+
+        const videoLog = await VideoLog.findOne({email});
+        const videos = videoLog.videos;
+
+        return res.render('watchRecode', {title, videos});
+    }
+
+    res.render('watchRecode', {title});
 }

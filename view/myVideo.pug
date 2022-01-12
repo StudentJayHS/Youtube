@@ -8,5 +8,6 @@ block content
             - const thumbnail = video.thumbnail
             a(href=`/videos/watch/${id}`)
                 img(src=`/upload/${thumbnail}`)
-            div
-                +video(video) 
+                br
+                span=video.title
+            +video(video) 

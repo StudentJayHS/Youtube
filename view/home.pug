@@ -18,12 +18,16 @@ block content
                 a(href="/videos/upload") Upload
             li 
                 a(href="/videos/my-videos") My Videos
+            li 
+                a(href="/videos/watch-recode") Watch Recode
 
     if videos
         each video in videos
-            - const id = video._id
-            - const thumbnail = video.thumbnail
+            - let user = userId
+            - let id = video._id
+            - let thumbnail = video.thumbnail
             a(href=`/videos/watch/${id}`)
                 img(src=`upload/${thumbnail}`)
-            div
-                +video(video) 
+                br
+                span=video.title
+            +video(video) 

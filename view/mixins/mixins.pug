@@ -1,8 +1,5 @@
 mixin video(video)
     div
-        - const id = video._id
-        a(href=`/videos/watch/${id}`)=video.title
-        br
         span=video.description
         br
         span=video.hashtag

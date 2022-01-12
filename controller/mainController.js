@@ -13,7 +13,7 @@ export const main = async (req, res) => {
         return res.render('home', {videos});
     }
 
-    res.render("home", {login: user.login, videos});
+    res.render("home", {login: user.login, videos, userId});
 }
 
 export const search = async (req, res) => {
