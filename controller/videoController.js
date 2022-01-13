@@ -17,12 +17,24 @@ export const getUpload = async(req, res) => {
 
 export const postUpload = async (req, res) => {
     const { title, description, hashtag } = req.body;
-    let thumbnail = "";
+    const { thumbnail, video } = req.files;
+    let viewThumbnail = "";
     let videoFile = "";
+
+    // 확장자가 일치하지 않은 경우
+    if(thumbnail[0].originalname.match(/\.(jpg|jpeg)$/) === null) {
+        const error = "Only the image is possible.(jpg, jpeg)";
+        return res.render("upload", {error});
+    }
+
+    if(video[0].originalname.match(/\.(mp4)$/) === null) {
+        const error = "Only the video is possible.(mp4)";
+        return res.render("upload", {error});
+    }
 
     // thumbnail 을 등록하지 않고 업로드를 할 경우 에러 메시지 출력
     if(req.files['thumbnail']) {
-        thumbnail = req.files['thumbnail'][0].filename;
+        viewThumbnail = req.files['thumbnail'][0].filename;
     } else {
         const error = 'You recommend that you register your picture';
         return res.render('upload', {error})
@@ -40,7 +52,7 @@ export const postUpload = async (req, res) => {
     const id = req.session.userId;
 
     await Video.create({
-        thumbnail,
+        thumbnail: viewThumbnail,
         videoFile,
         title,
         description,
@@ -73,6 +85,12 @@ export const watch = async (req, res) => {
 
 export const myVideo = async (req, res) => {
     const title = "My Videos"
+
+    // 로그인이 되지 않았을 때 업로드 페이지 접근 불가능
+    if(req.session.userId === undefined) {
+        return res.redirect("/users/login");
+    }
+
     const { userId } = req.session;
     const videos = await Video.find({userId});
 
@@ -81,6 +99,11 @@ export const myVideo = async (req, res) => {
 
 export const watchRecode = async (req, res) => {
     const title = "Watch Recode";
+
+    // 로그인이 되지 않았을 때 업로드 페이지 접근 불가능
+    if(req.session.userId === undefined) {
+        return res.redirect("/users/login");
+    }
 
     const userId = req.session.userId;
     if(userId) {

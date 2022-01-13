@@ -4,7 +4,7 @@ block content
     if video
         - const videoFile = video.videoFile
         div 
-            video(src=`/upload/${videoFile}`, controls)
+            video(src=`/upload/video/${videoFile}`, controls, autoplay="autoplay")
         p 
             span=video.title
     else 

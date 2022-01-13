@@ -4,10 +4,20 @@ import multer from "multer";
 
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
-        cb(null, 'upload/')     // 파일 경로 설정
+        // if 문으로 확장자에 따라 폴더를 나눠 담기
+        if (file.originalname.match(/\.(jpg|jepg)$/)) {
+            cb(null, 'upload/thumbnail');    // 파일 경로 설정
+        } else if (file.originalname.match(/\.(mp4)$/)) {
+            cb(null, 'upload/video');
+        }
     },
     filename: function(req, file, cb) {
-        cb(null, file.originalname)     // 파일 이름 변경
+        const date = new Date();
+        if (file.originalname.match(/\.(jpg|jepg)$/)) {
+            cb(null, date.getTime() + '.jpg');    // 파일 이름 변경
+        } else if (file.originalname.match(/\.(mp4)$/)) {
+            cb(null, date.getTime() + 'mp4');
+        }
     }
 })
 

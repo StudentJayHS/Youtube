@@ -27,7 +27,7 @@ block content
             - let id = video._id
             - let thumbnail = video.thumbnail
             a(href=`/videos/watch/${id}`)
-                img(src=`upload/${thumbnail}`)
+                img(src=`upload/thumbnail/${thumbnail}`)
                 br
                 span=video.title
             +video(video) 
