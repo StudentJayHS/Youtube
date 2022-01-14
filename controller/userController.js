@@ -143,6 +143,12 @@ export const postFindPassword = async (req, res) => {
 
 export const getChangePassword = (req, res) => {
     const title = "Change Password";
+
+    // find-password 경로를 거치지 않고 바로 올 경우
+    if(!req.session.identification) {
+        return res.redirect('/users/find-password');
+    }
+
     res.render('changePassword', {title})
 }
 
