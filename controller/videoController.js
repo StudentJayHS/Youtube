@@ -83,7 +83,7 @@ export const watch = async (req, res) => {
     res.render('watch', {video, title});
 }
 
-export const myVideo = async (req, res) => {
+export const getMyVideo = async (req, res) => {
     const title = "My Videos"
 
     // 로그인이 되지 않았을 때 업로드 페이지 접근 불가능
@@ -95,6 +95,30 @@ export const myVideo = async (req, res) => {
     const videos = await Video.find({userId});
 
     res.render('myVideo', {title, videos});
+}
+
+import fs from 'fs';
+
+export const postMyVideo = async (req, res) => {
+    const title = 'My Videos'
+    const { id } = req.body;
+    console.log(id);
+
+    const video = await Video.findById(id);
+    const thumbnail = video.thumbnail;
+    const videoFile = video.videoFile;
+
+    fs.unlink(`upload/thumbnail/${thumbnail}`, (err) => {
+        console.log(err);
+    })
+
+    fs.unlink(`upload/video/${videoFile}`, (err) => {
+        console.log(err);
+    })
+
+    await Video.deleteOne({video});
+
+    res.render('myVideo', {title});
 }
 
 export const watchRecode = async (req, res) => {

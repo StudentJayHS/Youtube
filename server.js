@@ -10,6 +10,7 @@ import "./database/User.js";
 
 const app = express();
 
+// app.set 문서를 참고(express 문서)
 app.set("view engine", "pug");
 app.set("views", "view");
 
@@ -28,6 +29,7 @@ app.use('/videos', videoRouter);
 
 // route req 방식으로 작동되기 때문에 js, css, image file 등은 폴더를 생성해 static 을 사용해야 함.
 app.use('/upload', express.static('upload'));   // upload 폴더 내 파일을 /upload 루트로 사용하겠다는 의미
+app.use('/scripts', express.static('scripts'));
 
 app.listen(4000, () => {
     console.log("welcome to my youtube!")

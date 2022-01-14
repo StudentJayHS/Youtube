@@ -1,5 +1,5 @@
 import express from "express";
-import { getUpload, postUpload, watch, myVideo, watchRecode } from "../controller/videoController.js";
+import { getUpload, postUpload, watch, getMyVideo, watchRecode, postMyVideo } from "../controller/videoController.js";
 import multer from "multer";
 
 const storage = multer.diskStorage({
@@ -30,5 +30,5 @@ export const videoRouter = express.Router();
 
 videoRouter.route('/upload').get(getUpload).post(upload.fields([{name: "thumbnail"}, {name: "video"}]),postUpload);
 videoRouter.get('/watch/:id', watch);
-videoRouter.get('/my-videos', myVideo);
+videoRouter.route('/my-videos').get(getMyVideo).post(postMyVideo);
 videoRouter.get('/watch-recode', watchRecode);
