@@ -1,5 +1,7 @@
 import "express-session";
 import "multer";
+import fs from 'fs';
+
 import { User } from "../database/User.js";
 import { Video } from "../database/Video.js";
 import { VideoLog } from "../database/VideoLog.js";
@@ -97,17 +99,15 @@ export const getMyVideo = async (req, res) => {
     res.render('myVideo', {title, videos});
 }
 
-import fs from 'fs';
-
 export const postMyVideo = async (req, res) => {
     const title = 'My Videos'
     const { id } = req.body;
-    console.log(id);
-
+    
     const video = await Video.findById(id);
     const thumbnail = video.thumbnail;
     const videoFile = video.videoFile;
 
+    // 썸네일과 비디오 삭제
     fs.unlink(`upload/thumbnail/${thumbnail}`, (err) => {
         console.log(err);
     })
@@ -116,6 +116,7 @@ export const postMyVideo = async (req, res) => {
         console.log(err);
     })
 
+    // DB 에서의 비디오 정보 삭제
     await Video.deleteOne({video});
 
     res.render('myVideo', {title});
