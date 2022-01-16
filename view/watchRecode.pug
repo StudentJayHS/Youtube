@@ -8,8 +8,22 @@ block content
             - let user = userId
             - let id = video._id
             - let thumbnail = video.thumbnail
-            a(href=`/videos/watch/${id}`)
-                img(src=`/upload/thumbnail/${thumbnail}`)
-                br
-                span=video.title
-            +video(video) 
+            form(method="POST", class="form")
+                if !video.delete
+                    a(href=`/videos/watch/${id}`)
+                        img(src=`/upload/thumbnail/${thumbnail}`)
+                        br
+                        span=video.title
+                    +video(video) 
+                    button(class="button") X
+                    input(type="hidden", name="id", value=`${id}`)
+                    p
+                else
+                    form(method="POST", class="form")
+                        img(src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBwcHBwcGBwcHBwcHBwoHBgcGBw8ICQcKIBEWFhURExMYHCggGBolJx8TITEhJSkrLi4uFx8zODMsNygtLisBCgoKDQ0ODw0NDi0ZFRkrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrK//AABEIAMIBAwMBIgACEQEDEQH/xAAWAAEBAQAAAAAAAAAAAAAAAAAAAQf/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFgEBAQEAAAAAAAAAAAAAAAAAAAEC/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8Aw4AUAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABQAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFQUAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAUAUABBUAAAAAAEAAAAAAAAAAAAAAAAAAAAAAVQGkAEAAAAQAAAAAAAQAAAAAAAAAAAAAFAAUAH/9k=")
+                        span 삭제됨
+                        button(class="button") X
+                        input(type="hidden", name="id", value=`${id}`)
+                        p
+    block scripts 
+        script(src="/scripts/delete.js") 

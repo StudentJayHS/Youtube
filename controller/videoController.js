@@ -96,33 +96,54 @@ export const getMyVideo = async (req, res) => {
     const { userId } = req.session;
     const videos = await Video.find({userId});
 
+    console.log(videos);
+
     res.render('myVideo', {title, videos});
 }
 
 export const postMyVideo = async (req, res) => {
-    const title = 'My Videos'
     const { id } = req.body;
-    
+
     const video = await Video.findById(id);
     const thumbnail = video.thumbnail;
     const videoFile = video.videoFile;
 
-    // 썸네일과 비디오 삭제
-    fs.unlink(`upload/thumbnail/${thumbnail}`, (err) => {
-        console.log(err);
-    })
+    console.log(id);
+    console.log(video);
 
-    fs.unlink(`upload/video/${videoFile}`, (err) => {
-        console.log(err);
-    })
-
-    // DB 에서의 비디오 정보 삭제
+    // Video DB 에서의 비디오 정보 삭제
     await Video.deleteOne({video});
 
-    res.render('myVideo', {title});
+    // 썸네일과 비디오 삭제
+    fs.unlink(`upload/thumbnail/${thumbnail}`, (err) => {
+        if (err !== null) {
+            console.log(err);
+        }
+    });
+    fs.unlink(`upload/video/${videoFile}`, (err) => {
+        if (err !== null) {
+            console.log(err);
+        }
+    });
+
+    // VideoLog DB 에서의 비디오 정보 delete 수정
+    const email = req.session.email;
+    const videoLog = await VideoLog.findOne({email});
+    let videos = videoLog.videos;
+
+    for(let i = 0; i < videos.length; i++) {
+        if(videos[i]._id.toString() === id) {
+            videos[i].delete = true;
+        }
+    }
+
+    await VideoLog.findOneAndUpdate({email}, {videos});
+    
+
+    res.redirect('/videos/my-videos');
 }
 
-export const watchRecode = async (req, res) => {
+export const getWatchRecode = async (req, res) => {
     const title = "Watch Recode";
 
     // 로그인이 되지 않았을 때 업로드 페이지 접근 불가능
@@ -141,5 +162,26 @@ export const watchRecode = async (req, res) => {
         return res.render('watchRecode', {title, videos});
     }
 
-    res.render('watchRecode', {title});
+    res.redirect('/');
+}
+
+export const postWatchRecode = async (req, res) => {
+    const { id } = req.body;
+    console.log(id);
+    const { email } = req.session;
+
+    const videoLog = await VideoLog.findOne({email});
+    let videos = videoLog.videos;
+
+    console.log(videos);
+    
+    for(let i = 0; i < videos.length; i++) {
+        if("" + videos[i]._id === id) {
+            videos.splice(i, 1);
+        }
+    }
+
+    await VideoLog.findOneAndUpdate({email}, {videos});
+    
+    res.redirect('/videos/watch-recode');
 }

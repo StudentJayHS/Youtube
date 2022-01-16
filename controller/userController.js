@@ -76,6 +76,7 @@ export const postLogin = async(req, res) => {
     } else {
         const user = await User.findOneAndUpdate({identification}, {login: true}, {returnDocument: "after"});
         req.session.userId = user._id.toString();
+        req.session.email = user.email;
         return res.redirect("/");
     }
 }

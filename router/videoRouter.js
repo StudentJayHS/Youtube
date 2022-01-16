@@ -1,5 +1,5 @@
 import express from "express";
-import { getUpload, postUpload, watch, getMyVideo, watchRecode, postMyVideo } from "../controller/videoController.js";
+import { getUpload, postUpload, watch, getMyVideo, postMyVideo, getWatchRecode, postWatchRecode } from "../controller/videoController.js";
 import multer from "multer";
 
 const storage = multer.diskStorage({
@@ -16,7 +16,7 @@ const storage = multer.diskStorage({
         if (file.originalname.match(/\.(jpg|jepg)$/)) {
             cb(null, date.getTime() + '.jpg');    // 파일 이름 변경
         } else if (file.originalname.match(/\.(mp4)$/)) {
-            cb(null, date.getTime() + 'mp4');
+            cb(null, date.getTime() + '.mp4');
         }
     }
 })
@@ -31,4 +31,4 @@ export const videoRouter = express.Router();
 videoRouter.route('/upload').get(getUpload).post(upload.fields([{name: "thumbnail"}, {name: "video"}]),postUpload);
 videoRouter.get('/watch/:id', watch);
 videoRouter.route('/my-videos').get(getMyVideo).post(postMyVideo);
-videoRouter.get('/watch-recode', watchRecode);
+videoRouter.route('/watch-recode').get(getWatchRecode).post(postWatchRecode);

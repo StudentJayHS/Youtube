@@ -10,6 +10,7 @@ const videoSchema = mongoose.Schema({
     views: {type: Number, default: 0},
     uploadDate: {type: Date},
     owner: {type: Boolean},
+    delete: {type: Boolean, default: false},
 });
 
 export const Video = mongoose.model("video", videoSchema);

@@ -13,9 +13,9 @@ block content
                     br
                     span=video.title
                 +video(video) 
-                form(method="POST")
-                    button(class="button") X
+                form(method="POST", class="form")
                     input(type="hidden", name="id", value=`${id}`)
+                    button(class="button") X
                 p
     block scripts 
         script(src="/scripts/delete.js") 

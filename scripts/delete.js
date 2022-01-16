@@ -1,13 +1,18 @@
-const buttonArray = document.querySelectorAll(".form");
-let button = "";
+const form = document.querySelectorAll(".form");
+const buttonArray = document.querySelectorAll(".button");
 
-function del(event) {
-    button = event.target.parentElement;
+function del(e) {
+    const button = e.target.parentElement;
     console.log(button);
     button.remove();
 }
 
+/*
 for(let i = 0; i < buttonArray.length; i++) {
-    button = buttonArray[i];
-    button.addEventListener("submit", del)
+    buttonArray[i].addEventListener("cllck", del);
 }
+*/
+
+buttonArray.forEach(btn => {
+    btn.addEventListener("submit", del);
+});
