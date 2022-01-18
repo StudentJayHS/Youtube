@@ -87,6 +87,54 @@ export const watch = async (req, res) => {
     res.render('watch', {video, title});
 }
 
+export const postWatch = async (req, res) => {
+    const { text, delCommentId } = req.body;
+    const { id } = req.params;
+    const userId = req.session.userId;
+    const date = new Date();
+    
+    // 로그인을 하지 않고 댓글을 달 경우 로그인 창으로 이동
+    if(!userId) {
+        return res.redirect('/users/login');
+    }
+
+    const user = await User.findById(userId);
+    const name = user.name;
+    
+    const video = await Video.findById(id);
+    let comments = video.comments;
+
+    // 댓글 삭제 버튼을 눌렀을 때 comment ID 값이 있는 경우
+    if(delCommentId) {
+        for(let i = 0; i < comments.length; i++) {
+            if(comments[i]._id.toString() === delCommentId) {
+                comments.splice(i, 1);
+            }
+        }
+
+        await Video.findByIdAndUpdate(id, {
+            comments
+        })
+
+        return res.redirect(`/videos/watch/${id}`)
+    }
+
+    const obj = {
+        userId,
+        name,
+        text,
+        date,
+    }
+
+    comments.push(obj);
+
+    await Video.findByIdAndUpdate(id, {
+        comments
+    })
+
+    res.redirect(`/videos/watch/${id}`)
+}
+
 export const getMyVideo = async (req, res) => {
     const title = "My Videos"
 
@@ -169,6 +217,7 @@ export const postWatchRecode = async (req, res) => {
     const videoLog = await VideoLog.findOne({email});
     let videos = videoLog.videos;
     
+    // videoLog 에 있는 video ID 와 삭제하려는 video ID 가 같으면 삭제
     for(let i = 0; i < videos.length; i++) {
         if("" + videos[i]._id === id) {
             videos.splice(i, 1);
