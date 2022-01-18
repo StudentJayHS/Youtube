@@ -6,10 +6,13 @@ block content
         - const videoFile = video.videoFile
         - const id = video._id
         - const comments = video.comments
+        - let views = video.views === 1 ? `${video.views} view` : `${video.views} views`;
         div 
             video(src=`/upload/video/${videoFile}`, controls, autoplay="autoplay")
         p 
             span=video.title
+            br
+            span=views
         p 
             form(method="POST")
                 input(type="text", placeholder="Comment", name="text", class="comment")

@@ -26,8 +26,11 @@ block content
             - let user = userId
             - let id = video._id
             - let thumbnail = video.thumbnail
+            - views = video.views == 1 ? `${video.views} view` : `${video.views} views`;
             a(href=`/videos/watch/${id}`)
                 img(src=`upload/thumbnail/${thumbnail}`)
                 br
                 span=video.title
+            br
+            span=views
             +video(video) 

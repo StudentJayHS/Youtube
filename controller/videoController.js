@@ -67,8 +67,9 @@ export const postUpload = async (req, res) => {
 
 export const getWatch = async (req, res) => {
     const { id } = req.params;
-    const video = await Video.findById(id);
+    let video = await Video.findById(id);
     const title = video.title;
+    let views = video.views + 1;
 
     // 비디오 링크를 클릭하면 시청한 비디오 저장
     const userId = req.session.userId;
@@ -80,9 +81,12 @@ export const getWatch = async (req, res) => {
         videos.push(video);
 
         await VideoLog.findOneAndUpdate({email}, {videos});
+        video = await Video.findByIdAndUpdate(id, {views}, {returnDocument: 'after'});
 
         return res.render('watch', {video, title, userId});
     }
+
+    video = await Video.findByIdAndUpdate(id, {views}, {returnDocument: 'after'});
 
     res.render('watch', {video, title});
 }
