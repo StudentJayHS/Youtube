@@ -80,6 +80,8 @@ export const watch = async (req, res) => {
         videos.push(video);
 
         await VideoLog.findOneAndUpdate({email}, {videos});
+
+        return res.render('watch', {video, title, userId});
     }
 
     res.render('watch', {video, title});
@@ -96,8 +98,6 @@ export const getMyVideo = async (req, res) => {
     const { userId } = req.session;
     const videos = await Video.find({userId});
 
-    console.log(videos);
-
     res.render('myVideo', {title, videos});
 }
 
@@ -107,12 +107,6 @@ export const postMyVideo = async (req, res) => {
     const video = await Video.findById(id);
     const thumbnail = video.thumbnail;
     const videoFile = video.videoFile;
-
-    console.log(id);
-    console.log(video);
-
-    // Video DB 에서의 비디오 정보 삭제
-    await Video.deleteOne({video});
 
     // 썸네일과 비디오 삭제
     fs.unlink(`upload/thumbnail/${thumbnail}`, (err) => {
@@ -126,11 +120,15 @@ export const postMyVideo = async (req, res) => {
         }
     });
 
+    // Video DB 에서의 비디오 정보 삭제
+    await Video.findByIdAndRemove(id);
+
     // VideoLog DB 에서의 비디오 정보 delete 수정
     const email = req.session.email;
     const videoLog = await VideoLog.findOne({email});
     let videos = videoLog.videos;
 
+    // watchRecode.pug 에서 delete 정보를 사용
     for(let i = 0; i < videos.length; i++) {
         if(videos[i]._id.toString() === id) {
             videos[i].delete = true;
@@ -138,7 +136,6 @@ export const postMyVideo = async (req, res) => {
     }
 
     await VideoLog.findOneAndUpdate({email}, {videos});
-    
 
     res.redirect('/videos/my-videos');
 }
@@ -167,13 +164,10 @@ export const getWatchRecode = async (req, res) => {
 
 export const postWatchRecode = async (req, res) => {
     const { id } = req.body;
-    console.log(id);
     const { email } = req.session;
 
     const videoLog = await VideoLog.findOne({email});
     let videos = videoLog.videos;
-
-    console.log(videos);
     
     for(let i = 0; i < videos.length; i++) {
         if("" + videos[i]._id === id) {

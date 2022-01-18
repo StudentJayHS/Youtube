@@ -7,15 +7,15 @@ block content
         each video in videos
             - const id = video._id
             - const thumbnail = video.thumbnail
-            div
-                a(href=`/videos/watch/${id}`)
-                    img(src=`/upload/thumbnail/${thumbnail}`)
-                    br
-                    span=video.title
-                +video(video) 
-                form(method="POST", class="form")
+            form(method="POST", class="form")
+                div(class="divContainer")
+                    a(href=`/videos/watch/${id}`)
+                        img(src=`/upload/thumbnail/${thumbnail}`)
+                        br
+                        span=video.title
+                    +video(video) 
                     input(type="hidden", name="id", value=`${id}`)
                     button(class="button") X
-                p
+                    p
     block scripts 
         script(src="/scripts/delete.js") 

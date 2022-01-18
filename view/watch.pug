@@ -7,5 +7,12 @@ block content
             video(src=`/upload/video/${videoFile}`, controls, autoplay="autoplay")
         p 
             span=video.title
+        p 
+            form(class="form")
+                input(type="text", placeholder="Comment", class="comment", data-id=`${userId}`)
+                div(class="textContainer")
     else 
         h1 Sorry, video not found.
+
+    block scripts 
+        script(src="/scripts/comment.js") 
