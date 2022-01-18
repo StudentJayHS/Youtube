@@ -15,14 +15,14 @@ block content
                 input(type="text", placeholder="Comment", name="text", class="comment")
                 p
             div(class="textContainer")
-                if comments
+                if comments.length
                     each comment in comments
                         - const commentId = comment._id
                         form(method="POST", class="deleteForm")
                             input(type="hidden", name="delCommentId", value=`${commentId}`)
                             +comment(comment)
                 else 
-                    h1 There are no comments yet.
+                    h2 There are no comments yet.
     else 
         h1 Sorry, video not found.
 

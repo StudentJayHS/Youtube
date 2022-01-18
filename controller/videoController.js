@@ -65,7 +65,7 @@ export const postUpload = async (req, res) => {
     res.redirect('/');
 }
 
-export const watch = async (req, res) => {
+export const getWatch = async (req, res) => {
     const { id } = req.params;
     const video = await Video.findById(id);
     const title = video.title;
