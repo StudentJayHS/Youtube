@@ -5,7 +5,7 @@ import { VideoLog } from "../database/VideoLog.js";
 
 export const getSign = (req, res) => {
     const title = "Sign";
-    res.render("sign", {title});
+    res.render("user/sign", {title});
 }
 
 export const postSign = async (req, res) => {
@@ -17,25 +17,25 @@ export const postSign = async (req, res) => {
     // 가입된 이름이 있는 경우
     if(nameExists !== false) {
         const error = "The name already exists";
-        return res.render("sign", {error})
+        return res.render("user/sign", {error})
     }
 
     // 가입된 이메일이 있는 경우
     if(emailExists !== false) {
         const error = "The email already exists";
-        return res.render("sign", {error})
+        return res.render("user/sign", {error})
     }
 
     // 가입된 아이디가 있는 경우
     if(idExists !== false) {
         const error = "The ID already exists";
-        return res.render("sign", {error})
+        return res.render("user/sign", {error})
     }
     
     // 회원가입 할 때 비밀번호와 비밀번호 확인이 서로 다를 때
     if(password != password_2) {
         const error = "Password doesn't match";
-        return res.render('sign', {error})
+        return res.render('user/sign', {error})
     }
 
     await VideoLog.create({
@@ -54,7 +54,7 @@ export const postSign = async (req, res) => {
 
 export const getLogin = (req, res) => {
     const title = "Login";
-    res.render("login", {title})
+    res.render("user/login", {title})
 }
 
 export const postLogin = async(req, res) => {
@@ -64,7 +64,7 @@ export const postLogin = async(req, res) => {
     // user 정보가 없는 경우(아이디가 일치하지 않으면)
     if(user === null) {
         const error = "ID doesn't exists";
-        return res.render("login", {error})
+        return res.render("user/login", {error})
     }
 
     const loadPassword = await bcrypt.compare(password, user.password);
@@ -72,7 +72,7 @@ export const postLogin = async(req, res) => {
     // user에 있는 비밀번호와 입력된 비밀번호를 비교
     if(loadPassword === false) {
         const error = "Password doesn't match";
-        return res.render('login', {error});
+        return res.render('user/login', {error});
     } else {
         const user = await User.findOneAndUpdate({identification}, {login: true}, {returnDocument: "after"});
         req.session.userId = user._id.toString();
@@ -94,7 +94,7 @@ export const logout = async (req, res) => {
 
 export const getFindId = (req, res) => {
     const title = "Find Id";
-    res.render('findId', {title});
+    res.render('user/findId', {title});
 }
 
 export const postFindId = async (req, res) => {
@@ -105,22 +105,22 @@ export const postFindId = async (req, res) => {
     // 이메일 정보가 일치하지 않는 경우
     if (!user) {
         const error = "The email doesn't exists";
-        return res.render('findId', {error})
+        return res.render('user/findId', {error})
     }
 
     // 이름 정보가 일치하지 않는 경우
     if (name !== user.name) {
         const error = "The name doesn't match";
-        return res.render('findId', {error})
+        return res.render('user/findId', {error})
     }
 
     const id = user.identification;
-    res.render('findId', {id, name, title});
+    res.render('user/findId', {id, name, title});
 }
 
 export const getFindPassword = (req, res) => {
     const title = "Find Password"
-    res.render('findPassword', {title})
+    res.render('user/findPassword', {title})
 }
 
 export const postFindPassword = async (req, res) => {
@@ -130,13 +130,13 @@ export const postFindPassword = async (req, res) => {
     // 아이디가 없는 경우
     if(!user) {
         const error = "ID doesn't exists";
-        return res.render('findPassword', {error})
+        return res.render('user/findPassword', {error})
     }
 
     // 이름이 일치하지 않는 경우
     if(name !== user.name) {
         const error = "The name doesn't match";
-        return res.render('findPassword', {error})
+        return res.render('user/findPassword', {error})
     }
     req.session.identification = identification;
     res.redirect('/users/change-password');
@@ -161,7 +161,7 @@ export const getChangePassword = async (req, res) => {
     // 프로필에서 비밀번호 수정할 때 사용할 user
     const user = await User.findOne({identification});
 
-    res.render('changePassword', {title, user});
+    res.render('user/changePassword', {title, user});
 }
 
 export const postChangePassword = async (req, res) => {
@@ -176,12 +176,12 @@ export const postChangePassword = async (req, res) => {
 
         if(!comparePassword) {
             error = "The password doesn't match";
-            return res.render('changePassword', {error});
+            return res.render('user/changePassword', {error});
         }
 
         if(changePassword !== changePassword_2) {
             const error = "The passwords don't match";
-            return res.render('changePassword', {error})
+            return res.render('user/changePassword', {error})
         }
 
         await User.findOneAndUpdate({identification}, { password: await bcrypt.hash(changePassword, 5) });
@@ -192,7 +192,7 @@ export const postChangePassword = async (req, res) => {
     // 비밀번호가 서로 일치하지 않는 경우
     if(changePassword !== changePassword_2) {
         const error = "The passwords don't match";
-        return res.render('changePassword', {error})
+        return res.render('user/changePassword', {error})
     }
 
     await User.findOneAndUpdate({identification}, { password: await bcrypt.hash(changePassword, 5) });
@@ -211,7 +211,7 @@ export const profile = async (req, res) => {
 
     const user = await User.findById(userId);
 
-    res.render('profile', {title, user});
+    res.render('user/profile', {title, user});
 }
 
 export const getEditProfile = (req, res) => {
@@ -223,7 +223,7 @@ export const getEditProfile = (req, res) => {
         return res.redirect('/users/login');
     }
 
-    res.render('editProfile', {title});
+    res.render('user/editProfile', {title});
 }
 
 export const postEditProfile = async (req, res) => {
@@ -260,8 +260,8 @@ export const postEditProfile = async (req, res) => {
 
     if(!comparePassword) {
         const error = "The Password doesn't match";
-        return res.render('editProfile', {error});
+        return res.render('user/editProfile', {error});
     }
 
-    res.render('editProfile', {user})
+    res.render('user/editProfile', {user})
 }

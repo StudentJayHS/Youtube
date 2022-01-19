@@ -14,7 +14,7 @@ export const getUpload = async(req, res) => {
         return res.redirect("/users/login");
     }
 
-    res.render("upload", {title})
+    res.render("video/upload", {title})
 }
 
 export const postUpload = async (req, res) => {
@@ -26,12 +26,12 @@ export const postUpload = async (req, res) => {
     // 확장자가 일치하지 않은 경우
     if(thumbnail[0].originalname.match(/\.(jpg|jpeg)$/) === null) {
         const error = "Only the image is possible.(jpg, jpeg)";
-        return res.render("upload", {error});
+        return res.render("video/upload", {error});
     }
 
     if(video[0].originalname.match(/\.(mp4)$/) === null) {
         const error = "Only the video is possible.(mp4)";
-        return res.render("upload", {error});
+        return res.render("video/upload", {error});
     }
 
     // thumbnail 을 등록하지 않고 업로드를 할 경우 에러 메시지 출력
@@ -39,7 +39,7 @@ export const postUpload = async (req, res) => {
         viewThumbnail = req.files['thumbnail'][0].filename;
     } else {
         const error = 'You recommend that you register your picture';
-        return res.render('upload', {error})
+        return res.render('video/upload', {error})
     }
 
     // videoFile 을 등록하지 않고 업로드를 할 경우 에러 메시지 출력
@@ -47,7 +47,7 @@ export const postUpload = async (req, res) => {
         videoFile = req.files['video'][0].filename;
     } else {
         const error = 'You recommed that you register your video';
-        return res.render('upload', {error});
+        return res.render('video/upload', {error});
     }
 
     const uploadDate = new Date();
@@ -83,12 +83,12 @@ export const getWatch = async (req, res) => {
         await VideoLog.findOneAndUpdate({email}, {videos});
         video = await Video.findByIdAndUpdate(id, {views}, {returnDocument: 'after'});
 
-        return res.render('watch', {video, title, userId});
+        return res.render('video/watch', {video, title, userId});
     }
 
     video = await Video.findByIdAndUpdate(id, {views}, {returnDocument: 'after'});
 
-    res.render('watch', {video, title});
+    res.render('video/watch', {video, title});
 }
 
 export const postWatch = async (req, res) => {
@@ -150,7 +150,7 @@ export const getMyVideo = async (req, res) => {
     const { userId } = req.session;
     const videos = await Video.find({userId});
 
-    res.render('myVideo', {title, videos});
+    res.render('video/myVideo', {title, videos});
 }
 
 export const postMyVideo = async (req, res) => {
@@ -208,7 +208,7 @@ export const getWatchRecode = async (req, res) => {
         const videoLog = await VideoLog.findOne({email});
         const videos = videoLog.videos;
 
-        return res.render('watchRecode', {title, videos});
+        return res.render('video/watchRecode', {title, videos});
     }
 
     res.redirect('/');

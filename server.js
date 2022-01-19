@@ -12,7 +12,7 @@ const app = express();
 
 // app.set 문서를 참고(express 문서)
 app.set("view engine", "pug");
-app.set("views", "view");
+app.set("views", 'view');
 
 app.use(express.urlencoded({ extended: true }));
 
