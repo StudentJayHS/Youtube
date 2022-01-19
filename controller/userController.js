@@ -142,28 +142,126 @@ export const postFindPassword = async (req, res) => {
     res.redirect('/users/change-password');
 }
 
-export const getChangePassword = (req, res) => {
+export const getChangePassword = async (req, res) => {
     const title = "Change Password";
+    const identification = req.session.identification;
+
+    // 프로필 수정할 때 비밀번호 입력 없이 url 을 통해 접속을 시도하는 경우
+    if(!req.session.EditProfile) {
+        return res.redirect('/users/edit-profile');
+    }
 
     // find-password 경로를 거치지 않고 바로 올 경우
-    if(!req.session.identification) {
+    if(!identification) {
         return res.redirect('/users/find-password');
     }
 
-    res.render('changePassword', {title})
+    req.session.EditProfile = false;
+
+    // 프로필에서 비밀번호 수정할 때 사용할 user
+    const user = await User.findOne({identification});
+
+    res.render('changePassword', {title, user});
 }
 
 export const postChangePassword = async (req, res) => {
-    const { changePassword, changePassword_2 } = req.body;
+    const { changePassword, changePassword_2, profile, nowPassword } = req.body;
     const { identification } = req.session;
+    const user = await User.findOne({identification});
+    let error = "";
+
+    // 프로필에서 비밀번호 변경을 하는 경우
+    if(profile) {
+        const comparePassword = await bcrypt.compare(nowPassword, user.password);
+
+        if(!comparePassword) {
+            error = "The password doesn't match";
+            return res.render('changePassword', {error});
+        }
+
+        if(changePassword !== changePassword_2) {
+            const error = "The passwords don't match";
+            return res.render('changePassword', {error})
+        }
+
+        await User.findOneAndUpdate({identification}, { password: await bcrypt.hash(changePassword, 5) });
+
+        return res.redirect('/users/edit-profile');
+    }
 
     // 비밀번호가 서로 일치하지 않는 경우
     if(changePassword !== changePassword_2) {
-        const error = "The password doesn't match";
+        const error = "The passwords don't match";
         return res.render('changePassword', {error})
     }
 
     await User.findOneAndUpdate({identification}, { password: await bcrypt.hash(changePassword, 5) });
     req.session.destroy();
     res.redirect('/users/login');
+}
+
+export const profile = async (req, res) => {
+    const userId = req.session.userId;
+    const title = "Profile";
+
+    // 로그인을 하지 않고 url 경로를 따라 접근했을 때
+    if(!userId) {
+        return res.redirect('/users/login');
+    }
+
+    const user = await User.findById(userId);
+
+    res.render('profile', {title, user});
+}
+
+export const getEditProfile = (req, res) => {
+    const title = "Edit Profile";
+    const userId = req.session.userId;
+
+    // 로그인을 하지 않고 url 경로를 따라 접근했을 때
+    if(!userId) {
+        return res.redirect('/users/login');
+    }
+
+    res.render('editProfile', {title});
+}
+
+export const postEditProfile = async (req, res) => {
+    const { password, edit } = req.body;
+    const userId = req.session.userId;
+
+    // 로그인을 하지 않고 url 경로를 따라 접근했을 때
+    if(!userId) {
+        return res.redirect('/users/login');
+    }
+
+    // edit 가 true 면 프로필 수정이 가능하도록(프로필 수정에서 첫 회 비밀번호를 입력하면)
+    if(edit) {
+        const { name, email } = req.body;
+
+        await User.findByIdAndUpdate(userId, {
+            name,
+            email,
+        })
+
+        return res.redirect('/users/profile');
+    }
+
+    const user = await User.findById(userId);
+
+    // 비밀번호 변경으로 가기 위해 세션 저장
+    req.session.identification = user.identification;
+
+    // 로그인 상태에서 url을 통해 바로 비밀번호 변경으로 가는 것을 막기 위함.
+    req.session.EditProfile = true;
+
+    // 프로필 수정을 하려면 비밀번호 한 번 입력하는 것으로 보안.
+    const comparePassword = await bcrypt.compare(password, user.password);
+
+    if(!comparePassword) {
+        const error = "The Password doesn't match";
+        return res.render('editProfile', {error});
+    }
+
+    res.render('editProfile', {user})
 }

@@ -1,0 +1,25 @@
+extends base
+
+block content 
+    if error 
+        span=error
+    if !user
+        form(method="POST")
+            span 비밀번호 
+            input(type="password", placeholder="Password", name="password", required)
+            span 
+                button 확인 
+    else 
+        form(method="POST")
+            input(type="hidden", name="edit", value=true)
+            span 이름 
+            input(type="text", value=user.name, name="name")
+            p 
+            span 이메일 
+            input(type="email", value=user.email, name="email")
+            p 
+            a(href="/users/change-password") 비밀번호 변경 
+            p
+            button 프로필 수정 
+            p 
+            a(href="/users/profile") 프로필 화면으로
