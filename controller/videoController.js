@@ -64,7 +64,7 @@ export const postUpload = async (req, res) => {
         videoFile,
         title,
         description,
-        hashtag: hashtag.startsWith('#') ? hashtag : `#${hashtag}`,
+        hashtag: hashtag.startsWith(' ', 1) ? "" : hashtag,
         uploadDate,
         userId: id,
     });
