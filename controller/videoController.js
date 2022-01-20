@@ -23,6 +23,12 @@ export const postUpload = async (req, res) => {
     let viewThumbnail = "";
     let videoFile = "";
 
+    // 파일 없이 업로드를 할 경우
+    if(thumbnail === undefined || video === undefined) {
+        const error = "There is no file";
+        return res.render("video/upload", {error});
+    }
+
     // 확장자가 일치하지 않은 경우
     if(thumbnail[0].originalname.match(/\.(jpg|jpeg)$/) === null) {
         const error = "Only the image is possible.(jpg, jpeg)";
