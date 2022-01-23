@@ -1,8 +1,11 @@
 doctype html 
 html 
-    if title
-        title Youtube - #{title}
-    else 
-        title Youtube
-body
-    block content
+    head
+        if title
+            title Youtube - #{title}
+        else 
+            title Youtube
+        script(src="https://kit.fontawesome.com/809697769a.js" crossorigin="anonymous")
+        script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js")
+    body
+        block content

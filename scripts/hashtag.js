@@ -39,6 +39,11 @@ hashtagInput.addEventListener('keydown', (event) => {
 })
 
 hashtagInput.addEventListener("input", () => {
+    // 첫 입력이 # 이 아닌 경우
+    if(!hashtagInput.value.startsWith("#")) {
+        hashtagInput.value = "#"
+    }
+
     // 빈 값을 보내거나, 스페이스 바를 눌러 해시태그 등록했을 때 공백 생기는 것을 방지
     if(hashtagInput.value === "" || hashtagInput.value.startsWith(" ", 1)) {
         hashtagInput.value = "#";

@@ -7,13 +7,22 @@ block content
         - const id = video._id
         - const comments = video.comments
         - let views = video.views === 1 ? `${video.views} view` : `${video.views} views`;
+        - let evalButton = button
+        - const login = userId
         div 
             video(src=`/upload/video/${videoFile}`, controls, autoplay="autoplay")
-        p 
+            p 
             span=video.title
             br
             span=views
-        p 
+            p
+            input(type="hidden", class="evalButton", value=`${evalButton}`)
+            input(type="hidden", class="id", value=`${id}`)
+            input(type="hidden", class="login", value=`${login}`)
+            button(id="like")
+                i(class="far fa-heart")
+            button(id="hate")
+                i(class="fas fa-heartbeat")
             form(method="POST")
                 input(type="text", placeholder="Comment", name="text", class="comment")
                 p
@@ -31,3 +40,4 @@ block content
 
     block scripts 
         script(src="/scripts/comment.js") 
+        script(src="/scripts/watchEvaluation.js") 

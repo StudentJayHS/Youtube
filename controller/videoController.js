@@ -83,13 +83,24 @@ export const getWatch = async (req, res) => {
         const user = await User.findById(userId);
         const email = user.email;
         const videoLog = await VideoLog.findOne({email});
+
         let videos = videoLog.videos;
         videos.push(video);
+
+        // 좋아요 버튼을 눌렀을 경우 또는 싫어요 버튼을 눌렀을 경우
+        let button = "";
+        if(user.like.includes(id)) {
+            button = "like"
+        } else if(user.hate.includes(id)) {
+            button = "hate"
+        } else {
+            button = ""
+        }
 
         await VideoLog.findOneAndUpdate({email}, {videos});
         video = await Video.findByIdAndUpdate(id, {views}, {returnDocument: 'after'});
 
-        return res.render('video/watch', {video, title, userId});
+        return res.render('video/watch', {video, title, userId, button});
     }
 
     video = await Video.findByIdAndUpdate(id, {views}, {returnDocument: 'after'});
@@ -102,13 +113,77 @@ export const postWatch = async (req, res) => {
     const { id } = req.params;
     const userId = req.session.userId;
     const date = new Date();
+
+    const user = await User.findById(userId);
+
+    // 좋아요 또는 싫어요 버튼을 누르면 비디오 id 값 받음(ajax)
+    const videoId = req.body.id;
+
+    // 로그인 상태일 경우에만
+    if(userId) {
+        // 좋아요 버튼을 눌렀을 경우
+        if(req.body.like === 'true') {
+            let like = user.like;
+            like.push(videoId);
+
+            let hate = user.hate;
+            if(hate.includes(videoId)) {
+                hate.splice(hate.indexOf(videoId), 1);
+            }
+
+            return await User.findByIdAndUpdate(userId, {
+                like,
+                hate,
+            })
+        } 
+        
+        // 좋아요 버튼을 한 번 더 눌렀을 경우
+        if (req.body.like === 'false') {
+            let like = user.like;
+            if(like.includes(videoId)) {
+                like.splice(like.indexOf(videoId), 1);
+            }
+
+            return await User.findByIdAndUpdate(userId, {
+                like,
+            })
+        }
+
+        
+        // 싫어요 버튼을 눌렀을 경우
+        if(req.body.hate === 'true') {
+            let hate = user.hate;
+            hate.push(videoId);
+
+            let like = user.like;
+            if(like.includes(videoId)) {
+                like.splice(like.indexOf(videoId), 1);
+            }
+
+            return await User.findByIdAndUpdate(userId, {
+                like,
+                hate,
+            })
+        } 
+        
+        // 싫어요 버튼을 한 번 더 눌렀을 경우
+        if (req.body.hate === 'false') {
+            let hate = user.hate;
+            if(hate.includes(videoId)) {
+                hate.splice(hate.indexOf(videoId), 1);
+            }
+
+            return await User.findByIdAndUpdate(userId, {
+                hate,
+            })
+        }
+    }
     
     // 로그인을 하지 않고 댓글을 달 경우 로그인 창으로 이동
     if(!userId) {
         return res.redirect('/users/login');
     }
 
-    const user = await User.findById(userId);
     const name = user.name;
     
     const video = await Video.findById(id);
@@ -126,7 +201,7 @@ export const postWatch = async (req, res) => {
             comments
         })
 
-        return res.redirect(`/videos/watch/${id}`)
+        res.render(`video/watch`, {video, user})
     }
 
     const obj = {
@@ -142,7 +217,7 @@ export const postWatch = async (req, res) => {
         comments
     })
 
-    res.redirect(`/videos/watch/${id}`)
+    res.render(`video/watch`, {video, user})
 }
 
 export const getMyVideo = async (req, res) => {

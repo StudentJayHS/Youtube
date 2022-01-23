@@ -7,6 +7,8 @@ const userSchema = mongoose.Schema({
     identification: {type: String, require: true, unique: true},
     password: {type: String, require: true},
     login: {type: Boolean, default: false},
+    like: {type: Array, unique: true},
+    hate: {type: Array, unique: true},
 })
 
 export const User = mongoose.model("user", userSchema);
