@@ -16,14 +16,14 @@ block content
                         span=video.title
                     +video(video) 
                     button(class="button") X
-                    input(type="hidden", name="id", value=`${id}`)
+                    input(type="hidden", name="id", value=`${id}`, class="recodeVideoId")
                     p
                 else
                     form(method="POST", class="form")
                         img(src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBwcHBwcGBwcHBwcHBwoHBgcGBw8ICQcKIBEWFhURExMYHCggGBolJx8TITEhJSkrLi4uFx8zODMsNygtLisBCgoKDQ0ODw0NDi0ZFRkrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrK//AABEIAMIBAwMBIgACEQEDEQH/xAAWAAEBAQAAAAAAAAAAAAAAAAAAAQf/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFgEBAQEAAAAAAAAAAAAAAAAAAAEC/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8Aw4AUAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABQAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFQUAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAUAUABBUAAAAAAEAAAAAAAAAAAAAAAAAAAAAAVQGkAEAAAAQAAAAAAAQAAAAAAAAAAAAAFAAUAH/9k=")
                         span deleted
                         button(class="button") X
-                        input(type="hidden", name="id", value=`${id}`)
+                        input(type="hidden", name="id", value=`${id}`, class="recodeVideoId")
                         p
     block scripts 
         script(src="/scripts/deleteVideo.js") 

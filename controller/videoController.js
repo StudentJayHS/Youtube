@@ -319,7 +319,7 @@ export const getWatchRecode = async (req, res) => {
 }
 
 export const postWatchRecode = async (req, res) => {
-    const { id } = req.body;
+    const { videoId } = req.body;
     const { email } = req.session;
 
     const videoLog = await VideoLog.findOne({email});
@@ -327,12 +327,12 @@ export const postWatchRecode = async (req, res) => {
     
     // videoLog 에 있는 video ID 와 삭제하려는 video ID 가 같으면 삭제
     for(let i = 0; i < videos.length; i++) {
-        if("" + videos[i]._id === id) {
+        if("" + videos[i]._id === videoId) {
             videos.splice(i, 1);
         }
     }
 
     await VideoLog.findOneAndUpdate({email}, {videos});
     
-    res.redirect('/videos/watch-recode');
+    return res.json(email);
 }
