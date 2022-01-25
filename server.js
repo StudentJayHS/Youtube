@@ -14,6 +14,7 @@ const app = express();
 app.set("view engine", "pug");
 app.set("views", 'view');
 
+app.use(express.json());    // 프론트에서 fetch ajax 사용할 때 json 을 사용하기 위한 설정
 app.use(express.urlencoded({ extended: true }));
 
 app.use(session({

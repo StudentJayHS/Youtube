@@ -100,7 +100,7 @@ export const getWatch = async (req, res) => {
         await VideoLog.findOneAndUpdate({email}, {videos});
         video = await Video.findByIdAndUpdate(id, {views}, {returnDocument: 'after'});
 
-        return res.render('video/watch', {video, title, userId, button});
+        return res.render('video/watch', {video, title, userId, user, button});
     }
 
     video = await Video.findByIdAndUpdate(id, {views}, {returnDocument: 'after'});
@@ -115,6 +115,7 @@ export const postWatch = async (req, res) => {
     const date = new Date();
 
     const user = await User.findById(userId);
+    const name = user.name;
 
     // 좋아요 또는 싫어요 버튼을 누르면 비디오 id 값 받음(ajax)
     const videoId = req.body.id;
@@ -179,15 +180,37 @@ export const postWatch = async (req, res) => {
         }
     }
     
-    // 로그인을 하지 않고 댓글을 달 경우 로그인 창으로 이동
-    if(!userId) {
-        return res.redirect('/users/login');
-    }
-
-    const name = user.name;
-    
     const video = await Video.findById(id);
     let comments = video.comments;
+
+    // 로그인을 했을 시에만 댓글 작성
+    if(userId && text) {
+        const data = {
+            userId,
+            name,
+            text,
+            date,
+        }
+
+        comments.push(data);
+
+        const updateVideo = await Video.findByIdAndUpdate(id, {
+            comments
+        }, {returnDocument: 'after'});
+
+        // 댓글을 달았을 때 부여된 아이디 값 추출
+        const commentId = updateVideo.comments.slice(-1)[0]._id
+
+        const responseData = {
+            userId,
+            name,
+            text,
+            date,
+            commentId,
+        }
+
+        return res.json(responseData);
+    }
 
     // 댓글 삭제 버튼을 눌렀을 때 comment ID 값이 있는 경우
     if(delCommentId) {
@@ -201,23 +224,8 @@ export const postWatch = async (req, res) => {
             comments
         })
 
-        res.render(`video/watch`, {video, user})
+        return res.json(comments);
     }
-
-    const obj = {
-        userId,
-        name,
-        text,
-        date,
-    }
-
-    comments.push(obj);
-
-    await Video.findByIdAndUpdate(id, {
-        comments
-    })
-
-    res.render(`video/watch`, {video, user})
 }
 
 export const getMyVideo = async (req, res) => {

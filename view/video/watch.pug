@@ -23,7 +23,7 @@ block content
                 i(class="far fa-heart")
             button(id="hate")
                 i(class="fas fa-heartbeat")
-            form(method="POST")
+            form(method="POST", class="commentForm")
                 input(type="text", placeholder="Comment", name="text", class="comment")
                 p
             div(class="textContainer")
@@ -31,10 +31,10 @@ block content
                     each comment in comments
                         - const commentId = comment._id
                         form(method="POST", class="deleteForm")
-                            input(type="hidden", name="delCommentId", value=`${commentId}`)
+                            input(type="hidden", value=`${commentId}`)
                             +comment(comment)
                 else 
-                    h2 There are no comments yet.
+                    h2(class="notComment") There are no comments yet.
     else 
         h1 Sorry, video not found.
 
