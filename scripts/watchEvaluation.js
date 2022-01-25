@@ -44,6 +44,9 @@ $(document).ready(function() {
             dataType: 'json',
             type: 'POST',
             data: {like, id},
+            success: (userLike) => {
+                $('.userLike').text(userLike.length)
+            }
         })
     })
 })

@@ -87,7 +87,7 @@ export const getWatch = async (req, res) => {
         let videos = videoLog.videos;
         videos.push(video);
 
-        // 좋아요 버튼을 눌렀을 경우 또는 싫어요 버튼을 눌렀을 경우
+        // 좋아요 버튼 또는 싫어요 버튼이 클릭되어 있는 경우
         let button = "";
         if(user.like.includes(id)) {
             button = "like"
@@ -120,6 +120,10 @@ export const postWatch = async (req, res) => {
     // 좋아요 또는 싫어요 버튼을 누르면 비디오 id 값 받음(ajax)
     const videoId = req.body.id;
 
+    const video = await Video.findById(id);
+    let comments = video.comments;
+    let userLike = video.userLike;
+
     // 로그인 상태일 경우에만
     if(userId) {
         // 좋아요 버튼을 눌렀을 경우
@@ -132,10 +136,15 @@ export const postWatch = async (req, res) => {
                 hate.splice(hate.indexOf(videoId), 1);
             }
 
-            return await User.findByIdAndUpdate(userId, {
+            await User.findByIdAndUpdate(userId, {
                 like,
                 hate,
             })
+
+            userLike.push(userId);
+            await Video.findByIdAndUpdate(id, {userLike});
+
+            return res.json(userLike);
         } 
         
         // 좋아요 버튼을 한 번 더 눌렀을 경우
@@ -145,9 +154,17 @@ export const postWatch = async (req, res) => {
                 like.splice(like.indexOf(videoId), 1);
             }
 
-            return await User.findByIdAndUpdate(userId, {
+            await User.findByIdAndUpdate(userId, {
                 like,
             })
+
+            if(userLike.includes(userId)) {
+                userLike.splice(userLike.indexOf(userId), 1);
+            }
+
+            await Video.findByIdAndUpdate(id, {userLike});
+
+            return res.json(userLike);
         }
 
         
@@ -179,10 +196,8 @@ export const postWatch = async (req, res) => {
             })
         }
     }
-    
-    const video = await Video.findById(id);
-    let comments = video.comments;
 
+    // 댓글 part
     // 로그인을 했을 시에만 댓글 작성
     if(userId && text) {
         const data = {

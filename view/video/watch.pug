@@ -19,6 +19,7 @@ block content
             input(type="hidden", class="evalButton", value=`${evalButton}`)
             input(type="hidden", class="id", value=`${id}`)
             input(type="hidden", class="login", value=`${login}`)
+            span(class="userLike")=video.userLike.length
             button(id="like")
                 i(class="far fa-heart")
             button(id="hate")

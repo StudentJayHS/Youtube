@@ -11,6 +11,7 @@ const videoSchema = mongoose.Schema({
     uploadDate: {type: Date},
     owner: {type: Boolean},
     delete: {type: Boolean, default: false},
+    userLike: [{type: String, unique: true}],
     comments: [{
         userId: {type: String, unique: true},
         name: {type: String, unique: true},
