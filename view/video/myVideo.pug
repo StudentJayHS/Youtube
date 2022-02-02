@@ -14,8 +14,8 @@ block content
                         br
                         span=video.title
                     +video(video) 
-                    input(type="hidden", name="id", value=`${id}`)
                     button(class="button") X
                     p
+                input(type="hidden", name="id", value=`${id}`)
     block scripts 
-        script(src="/scripts/deleteVideo.js") 
+        script(src="/scripts/myVideoDelete.js") 

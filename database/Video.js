@@ -9,6 +9,7 @@ const videoSchema = mongoose.Schema({
     description: {type: String},
     views: {type: Number, default: 0},
     uploadDate: {type: Date},
+    viewDate: {type: Date},
     owner: {type: Boolean},
     delete: {type: Boolean, default: false},
     userLike: [{type: String, unique: true}],

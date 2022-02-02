@@ -3,12 +3,14 @@ include ../mixins/comment
 
 block content 
     if video
+        - const videoDate = videoIn
         - const videoFile = video.videoFile
         - const id = video._id
         - const comments = video.comments
         - let views = video.views === 1 ? `${video.views} view` : `${video.views} views`;
         - let evalButton = button
         - const login = userId
+        input(type="hidden", class="videoDate", value=`${videoDate}`)
         div 
             video(src=`/upload/video/${videoFile}`, controls, autoplay="autoplay")
             p 
@@ -42,3 +44,4 @@ block content
     block scripts 
         script(src="/scripts/comment.js") 
         script(src="/scripts/watchEvaluation.js") 
+        script(src="/scripts/watchRecode.js") 

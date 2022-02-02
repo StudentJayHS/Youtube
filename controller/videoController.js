@@ -77,15 +77,18 @@ export const getWatch = async (req, res) => {
     const title = video.title;
     let views = video.views + 1;
 
+    const viewDate = new Date();
+
     // 비디오 링크를 클릭하면 시청한 비디오 저장
     const userId = req.session.userId;
     if(userId) {
         const user = await User.findById(userId);
-        const email = user.email;
+        const { email } = req.session;
         const videoLog = await VideoLog.findOne({email});
-
         let videos = videoLog.videos;
-        videos.push(video);
+        let videoIn = "";
+
+        video = await Video.findByIdAndUpdate(id, {views, viewDate}, {returnDocument: 'after'});
 
         // 좋아요 버튼 또는 싫어요 버튼이 클릭되어 있는 경우
         let button = "";
@@ -97,13 +100,20 @@ export const getWatch = async (req, res) => {
             button = ""
         }
 
-        await VideoLog.findOneAndUpdate({email}, {videos});
-        video = await Video.findByIdAndUpdate(id, {views}, {returnDocument: 'after'});
+        // videoLog 의 videos 가 현재 비디오 값과 일치하는 게 있다면 마지막으로 시청한 시간 값을 가져옴
+        for(let i = 0; i < videos.length; i++) {
+            if(videos[i]._id.toString() === id) {
+                videoIn = videos[i].viewDate;
+            } else {
+                videos.push(video);
+                videos.reverse();
+            }
+        }
 
-        return res.render('video/watch', {video, title, userId, user, button});
+        return res.render('video/watch', {video, title, userId, button, videoIn});
     }
 
-    video = await Video.findByIdAndUpdate(id, {views}, {returnDocument: 'after'});
+    video = await Video.findByIdAndUpdate(id, {views, viewDate}, {returnDocument: 'after'});
 
     res.render('video/watch', {video, title});
 }
@@ -123,6 +133,29 @@ export const postWatch = async (req, res) => {
     const video = await Video.findById(id);
     let comments = video.comments;
     let userLike = video.userLike;
+
+    const { email } = req.session;
+    const videoLog = await VideoLog.findOne({email});
+    let videos = videoLog.videos;
+    
+    // 현재 시청한 시각과 과거 시청한 시간이 하루 이상 차이나면 watch recode 에 새로 추가하고, 아니면 맨 위로 정렬.
+    if(req.body.changeRecode) {
+        for(let i = 0; i < videos.length; i++) {
+            if(videos[i]._id.toString() === id){
+                videos.splice(i, 1);
+            }
+        }
+
+        videos.unshift(video);
+
+        return await VideoLog.findOneAndUpdate({email}, {videos});
+    } 
+    
+    if(req.body.changeRecode === false) {
+        videos.unshift(video);
+
+        return await VideoLog.findOneAndUpdate({email}, {videos});
+    }
 
     // 로그인 상태일 경우에만
     if(userId) {
@@ -258,9 +291,9 @@ export const getMyVideo = async (req, res) => {
 }
 
 export const postMyVideo = async (req, res) => {
-    const { id } = req.body;
+    const { videoId } = req.body;
 
-    const video = await Video.findById(id);
+    const video = await Video.findById(videoId);
     const thumbnail = video.thumbnail;
     const videoFile = video.videoFile;
 
@@ -277,7 +310,7 @@ export const postMyVideo = async (req, res) => {
     });
 
     // Video DB 에서의 비디오 정보 삭제
-    await Video.findByIdAndRemove(id);
+    await Video.findByIdAndRemove(videoId);
 
     // VideoLog DB 에서의 비디오 정보 delete 수정
     const email = req.session.email;
@@ -286,14 +319,14 @@ export const postMyVideo = async (req, res) => {
 
     // watchRecode.pug 에서 delete 정보를 사용
     for(let i = 0; i < videos.length; i++) {
-        if(videos[i]._id.toString() === id) {
+        if(videos[i]._id.toString() === videoId) {
             videos[i].delete = true;
         }
     }
 
     await VideoLog.findOneAndUpdate({email}, {videos});
 
-    res.redirect('/videos/my-videos');
+    return res.json(videoId);
 }
 
 export const getWatchRecode = async (req, res) => {
@@ -334,5 +367,5 @@ export const postWatchRecode = async (req, res) => {
 
     await VideoLog.findOneAndUpdate({email}, {videos});
     
-    return res.json(email);
+    return res.json(videoId);
 }
