@@ -30,8 +30,8 @@ export const postUpload = async (req, res) => {
     }
 
     // 확장자가 일치하지 않은 경우
-    if(thumbnail[0].originalname.match(/\.(jpg|jpeg)$/) === null) {
-        const error = "Only the image is possible.(jpg, jpeg)";
+    if(thumbnail[0].originalname.match(/\.(jpg|jpeg|png)$/) === null) {
+        const error = "Only the image is possible.(jpg, jpeg, png)";
         return res.render("video/upload", {error});
     }
 

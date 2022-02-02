@@ -1,6 +1,7 @@
 import { User } from "../database/User.js";
 import "express-session";
 import bcrypt from "bcrypt";
+import fs from 'fs';
 import { VideoLog } from "../database/VideoLog.js";
 
 export const getSign = (req, res) => {
@@ -247,19 +248,38 @@ export const postEditProfile = async (req, res) => {
         return res.redirect('/users/login');
     }
 
+    const user = await User.findById(userId);
+
+    // 확장자가 일치하지 않는 경우
+    if(req.file.originalname.match(/\.(jpg|jpeg|png)$/) === null) {
+        const error = "Only the image is possible.(jpg, jpeg, png)";
+        return res.render('editProfile', {error, user});
+    }
+
+    let picture = req.file.filename;
+    const profilePicture = user.picture;
+
+    // 프로필 사진이 있는 경우 삭제
+    if(picture && profilePicture) {
+        fs.unlink(`upload/picture/${profilePicture}`, (err) => {
+            if (err !== null) {
+                console.log(err);
+            }
+        });
+    }
+
     // edit 가 true 면 프로필 수정이 가능하도록(프로필 수정에서 첫 회 비밀번호를 입력하면)
     if(edit) {
         const { name, email } = req.body;
 
         await User.findByIdAndUpdate(userId, {
+            picture,
             name,
             email,
         })
 
         return res.redirect('/users/profile');
     }
-
-    const user = await User.findById(userId);
 
     // 비밀번호 변경으로 가기 위해 세션 저장
     req.session.identification = user.identification;
