@@ -69,6 +69,7 @@ commentForm.addEventListener('submit', (event) => {
             event.preventDefault();
 
             const delCommentId = event.target[0].innerText;
+            console.log(delCommentId);
             const delForm = event.target;
 
             fetch(`/videos/watch/${id}`, {

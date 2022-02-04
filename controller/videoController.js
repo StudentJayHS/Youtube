@@ -124,11 +124,10 @@ export const postWatch = async (req, res) => {
     const userId = req.session.userId;
     const date = new Date();
 
-    const user = await User.findById(userId);
-    const name = user.name;
-
     // 좋아요 또는 싫어요 버튼을 누르면 비디오 id 값 받음(ajax)
     const videoId = req.body.id;
+
+    const user = await User.findById(userId);
 
     const video = await Video.findById(id);
     let comments = video.comments;
@@ -136,29 +135,29 @@ export const postWatch = async (req, res) => {
 
     const { email } = req.session;
     const videoLog = await VideoLog.findOne({email});
-    let videos = videoLog.videos;
     
     // 현재 시청한 시각과 과거 시청한 시간이 하루 이상 차이나면 watch recode 에 새로 추가하고, 아니면 맨 위로 정렬.
-    if(req.body.changeRecode) {
-        for(let i = 0; i < videos.length; i++) {
-            if(videos[i]._id.toString() === id){
-                videos.splice(i, 1);
-            }
-        }
-
-        videos.unshift(video);
-
-        return await VideoLog.findOneAndUpdate({email}, {videos});
-    } 
-    
-    if(req.body.changeRecode === false) {
-        videos.unshift(video);
-
-        return await VideoLog.findOneAndUpdate({email}, {videos});
-    }
-
     // 로그인 상태일 경우에만
     if(userId) {
+        let videos = videoLog.videos;
+        if(req.body.changeRecode) {
+            for(let i = 0; i < videos.length; i++) {
+                if(videos[i]._id.toString() === id){
+                    videos.splice(i, 1);
+                }
+            }
+
+            videos.unshift(video);
+
+            return await VideoLog.findOneAndUpdate({email}, {videos});
+        } 
+        
+        if(req.body.changeRecode === false) {
+            videos.unshift(video);
+
+            return await VideoLog.findOneAndUpdate({email}, {videos});
+        }
+
         // 좋아요 버튼을 눌렀을 경우
         if(req.body.like === 'true') {
             let like = user.like;
@@ -211,10 +210,18 @@ export const postWatch = async (req, res) => {
                 like.splice(like.indexOf(videoId), 1);
             }
 
-            return await User.findByIdAndUpdate(userId, {
+            if(userLike.includes(userId)) {
+                userLike.splice(userLike.indexOf(userId), 1);
+            }
+
+            await Video.findByIdAndUpdate(id, {userLike});
+
+            await User.findByIdAndUpdate(userId, {
                 like,
                 hate,
             })
+
+            return res.json(userLike);
         } 
         
         // 싫어요 버튼을 한 번 더 눌렀을 경우
@@ -233,6 +240,7 @@ export const postWatch = async (req, res) => {
     // 댓글 part
     // 로그인을 했을 시에만 댓글 작성
     if(userId && text) {
+        const name = user.name;
         const data = {
             userId,
             name,

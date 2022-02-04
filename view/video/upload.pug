@@ -4,11 +4,15 @@ block content
     if error 
         span=error
     form(method="POST", enctype="multipart/form-data")
+        img(src='', id="thumbnailPicture")
+        br
         span 표지 
-        input(type="file", name="thumbnail")
+        input(type="file", name="thumbnail", id='thumbnailInput')
         p
+        video(src='', id="videoPicture")
+        br
         span 동영상 
-        input(type="file", name="video")
+        input(type="file", name="video", id='videoInput')
         p
         span 제목 
         input(type="text", placeholder="write video title", name="title", required)
@@ -28,3 +32,4 @@ block content
         a(href="/") 홈 화면으로
     block scripts 
         script(src="/scripts/hashtag.js") 
+        script(src="/scripts/upload.js") 

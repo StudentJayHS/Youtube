@@ -83,6 +83,9 @@ $(document).ready(function() {
             dataType: 'json',
             type: 'POST',
             data: {hate, id},
+            success: (userLike) => {
+                $('.userLike').text(userLike.length)
+            }
         })
     })
 })

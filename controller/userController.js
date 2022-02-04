@@ -229,14 +229,13 @@ export const profile = async (req, res) => {
 export const getEditProfile = async (req, res) => {
     const title = "Edit Profile";
     const userId = req.session.userId;
-    const user = await User.findById(userId);
 
     // 로그인을 하지 않고 url 경로를 따라 접근했을 때
     if(!userId) {
         return res.redirect('/users/login');
     }
 
-    res.render('user/editProfile', {title, user});
+    res.render('user/editProfile', {title});
 }
 
 export const postEditProfile = async (req, res) => {
@@ -250,30 +249,38 @@ export const postEditProfile = async (req, res) => {
 
     const user = await User.findById(userId);
 
-    // 확장자가 일치하지 않는 경우
-    if(req.file.originalname.match(/\.(jpg|jpeg|png)$/) === null) {
-        const error = "Only the image is possible.(jpg, jpeg, png)";
-        return res.render('editProfile', {error, user});
-    }
-
-    let picture = req.file.filename;
-    const profilePicture = user.picture;
-
-    // 프로필 사진이 있는 경우 삭제
-    if(picture && profilePicture) {
-        fs.unlink(`upload/picture/${profilePicture}`, (err) => {
-            if (err !== null) {
-                console.log(err);
-            }
-        });
-    }
-
     // edit 가 true 면 프로필 수정이 가능하도록(프로필 수정에서 첫 회 비밀번호를 입력하면)
     if(edit) {
         const { name, email } = req.body;
 
+        // 수정하려는 파일이 존재하면
+        if(req.file) {
+            // 확장자가 일치하지 않는 경우
+            if(req.file.originalname.match(/\.(jpg|jpeg|png)$/) === null) {
+                const error = "Only the image is possible.(jpg, jpeg, png)";
+                return res.render('editProfile', {error, user});
+            }
+
+            let picture = req.file.filename;
+            const profilePicture = user.picture;
+
+            // 프로필 사진이 있는 경우 삭제
+            if(picture && profilePicture) {
+                fs.unlink(`upload/picture/${profilePicture}`, (err) => {
+                    if (err !== null) {
+                        console.log(err);
+                    }
+                });
+            }
+
+            await User.findByIdAndUpdate(userId, {
+                picture,
+                name,
+                email,
+            })
+        }
+
         await User.findByIdAndUpdate(userId, {
-            picture,
             name,
             email,
         })

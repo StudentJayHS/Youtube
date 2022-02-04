@@ -1,3 +1,5 @@
+// 마지막으로 시청한 시간이 하루가 지났으면 새로 추가 그렇지 않으면 맨 위에 재정렬
+
 let videoDate = document.querySelector('.videoDate').value;
 let date = new Date();
 
