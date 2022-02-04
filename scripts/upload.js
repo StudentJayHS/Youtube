@@ -6,7 +6,6 @@ const videoPicture = document.getElementById('videoPicture');
 
 thumbnailInput.addEventListener('change', (event) => {
     let reader = new FileReader();
-    console.log(event.target.files[0]);
     if(event.target.files[0] === undefined) {
         thumbnailPicture.src = ''
     } else {

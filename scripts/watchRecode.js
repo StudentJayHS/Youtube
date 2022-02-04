@@ -6,9 +6,6 @@ let date = new Date();
 videoDate = new Date(videoDate);
 date.setHours(date.getHours() - 24)
 
-console.log(date)
-console.log(videoDate);
-
 let changeRecode = "";
 
 if(date <= videoDate) {

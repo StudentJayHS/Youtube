@@ -248,14 +248,14 @@ export const postWatch = async (req, res) => {
             date,
         }
 
-        comments.push(data);
+        comments.unshift(data);
 
         const updateVideo = await Video.findByIdAndUpdate(id, {
             comments
         }, {returnDocument: 'after'});
 
         // 댓글을 달았을 때 부여된 아이디 값 추출
-        const commentId = updateVideo.comments.slice(-1)[0]._id
+        const commentId = updateVideo.comments[0]._id
 
         const responseData = {
             userId,

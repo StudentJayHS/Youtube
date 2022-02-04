@@ -4,6 +4,13 @@ const deleteForm = document.querySelectorAll('.deleteForm');
 const commentInput = document.querySelector('.comment');
 const commentForm = document.querySelector('.commentForm');
 
+nowScrollTop = "";
+
+// 댓글 삭제를 했을 때 스크롤 고정
+document.addEventListener('scroll', () => {
+    nowScrollTop = document.documentElement.scrollTop;
+})
+
 commentForm.addEventListener('submit', (event) => {
     event.preventDefault();
     const notComment = document.querySelector('.notComment');
@@ -63,13 +70,13 @@ commentForm.addEventListener('submit', (event) => {
         commentContainer.appendChild(date);
         form.appendChild(commentId);
         form.appendChild(commentContainer);
-        textContainer.appendChild(form);
+        textContainer.prepend(form);
 
         form.addEventListener('submit', (event) => {
             event.preventDefault();
 
             const delCommentId = event.target[0].innerText;
-            console.log(delCommentId);
+            console.log(event.target[0]);
             const delForm = event.target;
 
             fetch(`/videos/watch/${id}`, {
@@ -80,6 +87,7 @@ commentForm.addEventListener('submit', (event) => {
                 body: JSON.stringify({delCommentId}),
             }).then(response => response.json())
             .then(data => {
+                document.documentElement.scrollTop = nowScrollTop;
                 delForm.remove();
     
                 if(data.length === 0) {
