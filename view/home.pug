@@ -36,7 +36,9 @@ block content
             span=" "
             span(class="fas fa-heart")
             span=" "
-            span=video.userLike.length
+            span(class="userLike")=video.userLike.length
             br
             span=views
             +video(video) 
+    block scripts 
+        script(src="/scripts/home.js") 

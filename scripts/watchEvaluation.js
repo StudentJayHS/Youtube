@@ -2,6 +2,11 @@ const id = $('.id').val();
 const evaluation = $('.evalButton').val();
 const login = $('.login').val();
 const buttonForm = document.querySelector('.buttonForm');
+let heart = document.querySelector('.userLike').innerText;
+
+if(heart >= 1000) {
+    heart.innerText = heart/1000 + 'M';
+}
 
 // 유저가 이미 비디오에 좋아요 또는 싫어요를 했을 경우
 if(evaluation === 'like') {
@@ -45,7 +50,11 @@ $(document).ready(function() {
             type: 'POST',
             data: {like, id},
             success: (userLike) => {
-                $('.userLike').text(userLike.length)
+                if(userLike.length >= 1000) {
+                    $('.userLike').text(userLike.length/1000 + 'M')
+                } else {
+                    $('.userLike').text(userLike.length)
+                }
             }
         })
     })
@@ -84,7 +93,11 @@ $(document).ready(function() {
             type: 'POST',
             data: {hate, id},
             success: (userLike) => {
-                $('.userLike').text(userLike.length)
+                if(userLike.length >= 1000) {
+                    $('.userLike').text(userLike.length/1000 + 'M')
+                } else {
+                    $('.userLike').text(userLike.length)
+                }
             }
         })
     })
