@@ -17,12 +17,15 @@ export const main = async (req, res) => {
 }
 
 export const search = async (req, res) => {
-    const { search } = req.query;   // req 콘솔에는 body 값은 없고, query 값에 존재.
+    const { search } = req.query;   // get 방식일 경우 body 가 아닌 query 에 있음
     const title = search;
 
     // 정규식을 이용해 검색
     const videos = await Video.find({
-        title: { $regex: new RegExp(search, 'i') },
+        $or: [
+            {title: { $regex: new RegExp(search, 'i') }},
+            {hashtag: { $regex: new RegExp(search, 'i') }},
+        ]
     });
 
     res.render('home', {videos, title});

@@ -2,8 +2,8 @@ mixin video(video)
     div
         span=video.description
         br
-        span=video.hashtag
+        input(type="hidden", value=video.hashtag, class="home_hashtag")
+        div(class="home_hashtagContainer")
         br
         span=video.uploadDate
         br
-        
