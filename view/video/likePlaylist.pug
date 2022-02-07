@@ -1,0 +1,28 @@
+extends ../base
+include ../mixins/videos
+
+block content
+    if playlist.length
+        each video in playlist
+            - let id = video._id
+            - let thumbnail = video.thumbnail
+            - views = video.views == 1 ? `${video.views} view` : `${video.views} views`;
+            form(class="playlist_form")
+                a(href=`/videos/watch/${id}`)
+                    img(src=`/upload/thumbnail/${thumbnail}`)
+                    br
+                    span=video.title
+                span=" "
+                span(class="fas fa-heart")
+                span=" "
+                span(class="userLike")=video.userLike.length
+                br
+                span=views
+                +video(video)
+                input(type='hidden', value=id)
+                button(class="playlist_button")='X'
+    else 
+        h1 Video not found
+    block scripts 
+        script(src="/scripts/home.js") 
+        script(src="/scripts/likePlaylist.js") 

@@ -8,7 +8,6 @@ block content
         - const id = video._id
         - const comments = video.comments
         - let views = video.views === 1 ? `${video.views} view` : `${video.views} views`;
-        - let evalButton = button
         - const login = userId
         input(type="hidden", class="videoDate", value=`${videoDate}`)
         div 
@@ -18,7 +17,7 @@ block content
             br
             span=views
             p
-            input(type="hidden", class="evalButton", value=`${evalButton}`)
+            input(type="hidden", class="evalButton", value=button)
             input(type="hidden", class="id", value=`${id}`)
             input(type="hidden", class="login", value=`${login}`)
             span(class="userLike")=video.userLike.length

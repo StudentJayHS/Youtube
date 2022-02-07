@@ -132,7 +132,7 @@ export const postWatch = async (req, res) => {
     const video = await Video.findById(id);
     let comments = video.comments;
     let userLike = video.userLike;
-
+    
     const { email } = req.session;
     const videoLog = await VideoLog.findOne({email});
     
@@ -161,7 +161,7 @@ export const postWatch = async (req, res) => {
         // 좋아요 버튼을 눌렀을 경우
         if(req.body.like === 'true') {
             let like = user.like;
-            like.push(videoId);
+            like.unshift(videoId);
 
             let hate = user.hate;
             if(hate.includes(videoId)) {
@@ -376,4 +376,55 @@ export const postWatchRecode = async (req, res) => {
     await VideoLog.findOneAndUpdate({email}, {videos});
     
     return res.json(videoId);
+}
+
+export const getLikePlaylist = async (req, res) => {
+    const userId = req.session.userId;
+
+    const user = await User.findById(userId);
+    const playlist = [];
+
+    // 로그인을 하지 않고 링크로 접근하는 경우
+    if(!req.session.userId) {
+        return res.redirect('/users/login');
+    }
+
+    // user.like 에 저장된 video ID 값을 찾아 playlist 에 저장
+    for(let i = 0; i < user.like.length; i++) {
+        playlist.push(await Video.findById(user.like[i]));
+    }
+
+    res.render('video/likePlaylist', {playlist});
+}
+
+export const postLikePlaylist = async (req, res) => {
+    const videoId = req.body.videoId;
+
+    if(videoId) {
+        const userId = req.session.userId;
+        const user = await User.findById(userId);
+        const videoList = user.like;
+
+        const video = await Video.findById(videoId);
+        const videoLike = video.userLike;
+
+        if(videoList.includes(videoId)) {
+            videoList.splice(videoList.indexOf(videoId), 1);
+        }
+
+        if(videoLike.includes(userId)) {
+            videoLike.splice(videoLike.indexOf(userId), 1);
+        }
+
+        const updateUser = await User.findByIdAndUpdate(userId, {
+            like: videoList,
+        }, {returnDocument: 'after'})
+
+        await Video.findByIdAndUpdate(videoId, {
+            userLike: videoLike,
+        })
+
+        return res.json(updateUser.like);
+    }
+    return res.redirect('/')
 }

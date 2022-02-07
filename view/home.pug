@@ -21,11 +21,12 @@ block content
             li 
                 a(href="/videos/watch-recode") Watch Recode
             li 
+                a(href="/videos/like-playlist") Like Playlist
+            li 
                 a(href="/users/profile") Profile
 
     if videos
         each video in videos
-            - let user = userId
             - let id = video._id
             - let thumbnail = video.thumbnail
             - views = video.views == 1 ? `${video.views} view` : `${video.views} views`;
