@@ -4,14 +4,13 @@ include ../mixins/comment
 block content 
     if video
         - const videoDate = videoIn
-        - const videoFile = video.videoFile
         - const id = video._id
         - const comments = video.comments
         - let views = video.views === 1 ? `${video.views} view` : `${video.views} views`;
         - const login = userId
         input(type="hidden", class="videoDate", value=`${videoDate}`)
         div 
-            video(src=`/upload/video/${videoFile}`, controls, autoplay="autoplay")
+            video(src=`/upload/video/${video.videoFile}`, controls, autoplay="autoplay")
             p 
             span=video.title
             br

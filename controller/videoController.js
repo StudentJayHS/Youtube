@@ -56,7 +56,8 @@ export const postUpload = async (req, res) => {
         return res.render('video/upload', {error});
     }
 
-    const uploadDate = new Date();
+    const date = new Date();
+    const uploadDate = date.getFullYear() + '. ' + (date.getMonth() + 1) + '. ' + date.getDate();
     const id = req.session.userId;
 
     await Video.create({
@@ -400,6 +401,7 @@ export const getLikePlaylist = async (req, res) => {
 export const postLikePlaylist = async (req, res) => {
     const videoId = req.body.videoId;
 
+    // 좋아요 누른 video ID 가 있으면(삭제를 누른 경우)
     if(videoId) {
         const userId = req.session.userId;
         const user = await User.findById(userId);
@@ -427,4 +429,49 @@ export const postLikePlaylist = async (req, res) => {
         return res.json(updateUser.like);
     }
     return res.redirect('/')
+}
+
+export const getEditVideo = async (req, res) => {
+    const { id } = req.params;
+    const video = await Video.findById(id);
+
+    // 로그인을 하지 않고 링크로 접근하는 경우
+    if(!req.session.userId) {
+        return res.redirect('/users/login');
+    }
+
+    return res.render('video/editVideo', {video, id})
+}
+
+export const postEditVideo = async (req, res) => {
+    const { id } = req.params;
+    const { title, description, hashtag } = req.body;
+    
+    const video = await Video.findById(id);
+    if(req.file === undefined) {
+        const error = 'There is no file';
+        return res.render('video/editVideo', {error, video, id})
+    }
+
+    if(req.file.originalname.match(/\.(jpg|jpeg|png)$/) === null) {
+        const error = "Only the image is possible.(jpg, jpeg, png)";
+        return res.render('video/editVideo', {error, video, id})
+    }
+
+    fs.unlink(`upload/thumbnail/${video.thumbnail}`, (err) => {
+        if(err !== null) {
+            console.log(err);
+        }
+    })
+
+    const thumbnail = req.file.filename;
+
+    await Video.findByIdAndUpdate(id, {
+        title,
+        description,
+        hashtag,
+        thumbnail,
+    })
+
+    return res.redirect(`/videos/${id}/edit`);
 }

@@ -32,6 +32,10 @@ homeHashtag.forEach(input => {
                 inputButton.parentElement.submit();
             })
         }
+    } else {
+        const homeHashtagContainer = input.nextSibling;
+
+        homeHashtagContainer.remove();
     }
 })
 

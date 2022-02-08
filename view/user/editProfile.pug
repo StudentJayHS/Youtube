@@ -9,6 +9,8 @@ block content
             input(type="password", placeholder="Password", name="password", required)
             span 
                 button 확인 
+            p
+            a(href="/users/profile") 프로필 화면으로
     else 
         form(method="POST", enctype="multipart/form-data")
             - const picture = user.picture

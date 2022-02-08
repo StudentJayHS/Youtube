@@ -1,7 +1,11 @@
 mixin video(video)
     div
-        span=video.description
+        span=" "
+        span(class="fas fa-heart")
+        span=" "
+        span(class="userLike")=video.userLike.length
         br
+        span=views
         input(type="hidden", value=video.hashtag, class="home_hashtag")
         div(class="home_hashtagContainer")
         br

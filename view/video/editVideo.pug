@@ -1,0 +1,29 @@
+extends ../base
+
+block content 
+    - let views = video.views === 1 ? `${video.views} view` : `${video.views} views`;
+    div
+        form(method='POST', enctype="multipart/form-data")
+            a(href=`/videos/watch/${id}`)
+                video(src=`/upload/video/${video.videoFile}`)
+            div 
+                span 이미지 변경하기
+                br
+                img(src=`/upload/thumbnail/${video.thumbnail}`, class='edit_thumbnailPicture')
+                br
+                input(type="file", name='thumbnail', class='edit_thumbnailInput')
+            div
+                span 제목 
+                input(type="text", value=video.title, name="title")
+            div 
+                span 설명 
+                input(type="text", value=video.description, name="description")
+            input(type="hidden", name="hashtag", value=video.hashtag, class="edit_hiddenInput")
+            button 수정하기
+        form(class='edit_hashtagForm')
+            span 해시태그 
+            input(type="text", placeholder="write video hashtags", value="#", class="edit_hashtagInput")
+            p
+        div(class="edit_hashtagContainer")
+    block scripts 
+        script(src="/scripts/editVideo.js") 

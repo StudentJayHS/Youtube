@@ -12,12 +12,6 @@ block content
                     img(src=`/upload/thumbnail/${thumbnail}`)
                     br
                     span=video.title
-                span=" "
-                span(class="fas fa-heart")
-                span=" "
-                span(class="userLike")=video.userLike.length
-                br
-                span=views
                 +video(video)
                 input(type='hidden', value=id)
                 button(class="playlist_button")='X'

@@ -3,7 +3,8 @@ include ../mixins/videos
 
 block content 
     h1 My Video
-    if videos
+    p
+    if videos.length
         each video in videos
             - const id = video._id
             - const thumbnail = video.thumbnail
@@ -14,13 +15,9 @@ block content
                         img(src=`/upload/thumbnail/${thumbnail}`)
                         br
                         span=video.title
-                    span=" "
-                    span(class="fas fa-heart")
-                    span=" "
-                    span(class="userLike")=video.userLike.length
-                    br
-                    span=views
-                    +video(video) 
+                    +video(video)
+                    a(href=`/videos/${id}/edit`) 
+                         <i class="fas fa-pen"></i>
                     button(class="button") X
                     p
                 input(type="hidden", name="id", value=`${id}`)

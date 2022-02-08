@@ -8,7 +8,7 @@ const videoSchema = mongoose.Schema({
     hashtag: {type: String},
     description: {type: String},
     views: {type: Number, default: 0},
-    uploadDate: {type: Date},
+    uploadDate: {type: String},
     viewDate: {type: Date},
     owner: {type: Boolean},
     delete: {type: Boolean, default: false},
